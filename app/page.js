@@ -3,25 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image"; 
 import { ThemeToggle } from "@/components/theme-toggle"; 
-import { ArrowRight, ArrowUp, Calendar, ExternalLink, Layers, Mail, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Calendar, ExternalLink, Layers, Mail } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ReactLenis } from "lenis/react";
 import { motion, useSpring } from "framer-motion";
-import { BsInstagram, BsLinkedin } from "react-icons/bs";
+import { BsInstagram, BsLinkedin, BsTwitterX } from "react-icons/bs";
 
 gsap.registerPlugin(ScrollTrigger);
 
 // --- DATA ---
 const heroTools = [
-  { id: 'asana', label: 'Asana', image: '/companylogo/asana.png', x: 1, y: -200, mobileX: 0, mobileY: -130, color: '#ea580c' },
-  { id: 'jira', label: 'Jira', image: '/companylogo/jira.png', x: 180, y: -140, mobileX: 100, mobileY: -90, color: '#d97706' },
-  { id: 'ms365', label: 'MS 365', image: '/companylogo/microsoft.webp', x: 280, y: 0, mobileX: 140, mobileY: 0, color: '#2563eb' },
-  { id: 'clickup', label: 'ClickUp', image: '/companylogo/clickup.png', x: 180, y: 140, mobileX: 100, mobileY: 90, color: '#7c3aed' },
-  { id: 'zoho', label: 'Zoho', image: '/companylogo/zoho.png', x: -1, y: 200, mobileX: 0, mobileY: 130, color: '#ef4444' },
-  { id: 'google', label: 'Google', image: '/companylogo/google.webp', x: -180, y: 140, mobileX: -100, mobileY: 90, color: '#dc2626' },
-  { id: 'slack', label: 'Slack', image: '/companylogo/slack.png', x: -280, y: 0, mobileX: -140, mobileY: 0, color: '#f97316' },
-  { id: 'miro', label: 'Miro', image: '/companylogo/miro.png', x: -180, y: -140, mobileX: -100, mobileY: -90, color: '#fbbf24' },
+  { id: 'asana', label: 'Asana', image: '/companylogo/asana.png', x: 1, y: -190, mobileX: 0, mobileY: -130, color: '#ea580c' },
+  { id: 'jira', label: 'Jira', image: '/companylogo/jira.png', x: 170, y: -130, mobileX: 95, mobileY: -90, color: '#d97706' },
+  { id: 'ms365', label: 'MS 365', image: '/companylogo/microsoft.webp', x: 260, y: 0, mobileX: 135, mobileY: 0, color: '#2563eb' },
+  { id: 'clickup', label: 'ClickUp', image: '/companylogo/clickup.png', x: 170, y: 130, mobileX: 95, mobileY: 90, color: '#7c3aed' },
+  { id: 'zoho', label: 'Zoho', image: '/companylogo/zoho.png', x: -1, y: 190, mobileX: 0, mobileY: 130, color: '#ef4444' },
+  { id: 'google', label: 'Google', image: '/companylogo/google.webp', x: -170, y: 130, mobileX: -95, mobileY: 90, color: '#dc2626' },
+  { id: 'slack', label: 'Slack', image: '/companylogo/slack.png', x: -260, y: 0, mobileX: -135, mobileY: 0, color: '#f97316' },
+  { id: 'miro', label: 'Miro', image: '/companylogo/miro.png', x: -170, y: -130, mobileX: -95, mobileY: -90, color: '#fbbf24' },
 ];
 
 // --- COMPONENTS ---
@@ -49,7 +49,7 @@ function ImagePlaceholder({ src, alt = "Gaprio Visualization" }) {
   );
 }
 
-// --- DRAGGABLE NODE ---
+// --- DRAGGABLE NODE (INDIVIDUAL CARDS WITH BG) ---
 function DraggableNode({ tool, containerRef, isMobile }) {
   const initialX = isMobile ? tool.mobileX : tool.x;
   const initialY = isMobile ? tool.mobileY : tool.y;
@@ -73,7 +73,7 @@ function DraggableNode({ tool, containerRef, isMobile }) {
   }, [x, y]);
 
   const midX = pos.x / 2;
-  const midY = pos.y / 2 + (isMobile ? 30 : 60);
+  const midY = pos.y / 2 + (isMobile ? 25 : 45);
   const gradientId = `gradient-${tool.id}`;
 
   return (
@@ -84,17 +84,17 @@ function DraggableNode({ tool, containerRef, isMobile }) {
       >
         <defs>
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="currentColor" className="text-zinc-200 dark:text-zinc-800" stopOpacity="0.5" />
-            <stop offset="100%" stopColor={tool.color} stopOpacity="0.6" />
+            <stop offset="0%" stopColor="currentColor" className="text-zinc-300 dark:text-zinc-700" stopOpacity="0.3" />
+            <stop offset="100%" stopColor={tool.color} stopOpacity="0.8" />
           </linearGradient>
         </defs>
         <motion.path
           d={`M 0 0 Q ${midX} ${midY} ${pos.x} ${pos.y}`}
           stroke={`url(#${gradientId})`}
-          strokeWidth={isMobile ? "2" : "3"}
+          strokeWidth={isMobile ? "1.5" : "2.5"}
           strokeLinecap="round"
           fill="none"
-          className="opacity-60 transition-opacity duration-300"
+          className="opacity-70 transition-opacity duration-300"
         />
       </svg>
 
@@ -104,12 +104,19 @@ function DraggableNode({ tool, containerRef, isMobile }) {
         dragElastic={0.1}
         dragMomentum={false}
         style={{ x, y }}
-        whileHover={{ cursor: "grab" }}
+        whileHover={{ cursor: "grab"}}
         whileDrag={{ scale: 1.15, cursor: "grabbing", zIndex: 100 }}
-        className="group absolute w-[68px] h-[68px] md:w-24 md:h-24 bg-white dark:bg-[#121212] rounded-2xl md:rounded-3xl flex flex-col items-center justify-center shadow-lg dark:shadow-2xl z-20 border border-zinc-200 dark:border-white/10 backdrop-blur-md touch-none select-none overflow-visible"
+        className="group absolute w-[60px] h-[60px] md:w-20 md:h-20 bg-white dark:bg-[#121212] rounded-2xl md:rounded-[1.5rem] flex flex-col items-center justify-center shadow-md dark:shadow-2xl z-20 border border-zinc-200 dark:border-white/5 backdrop-blur-md touch-none select-none overflow-hidden"
       >
-        <div className="relative w-full h-full flex flex-col items-center justify-center">
-          <div className="relative w-7 h-7 md:w-10 md:h-10 mb-1 md:mb-2 pointer-events-none select-none">
+        {/* Glow Border on Hover */}
+        <div className="absolute inset-0 rounded-2xl md:rounded-[1.5rem] bg-gradient-to-tr from-black/5 dark:from-white/5 to-transparent pointer-events-none" />
+        <div
+          className="absolute inset-0 rounded-2xl md:rounded-[1.5rem]  transition-colors duration-300 pointer-events-none opacity-50"
+          style={{ borderColor: tool.color + "60", color: tool.color }}
+        />
+
+        <div className="relative w-full h-full flex flex-col items-center justify-center z-10">
+          <div className="relative w-6 h-6 md:w-8 md:h-8 mb-1 pointer-events-none select-none transition-transform duration-300 ">
             <Image
               src={tool.image}
               alt={tool.label}
@@ -118,18 +125,37 @@ function DraggableNode({ tool, containerRef, isMobile }) {
               className="object-contain"
             />
           </div>
-          <span className="text-[9px] md:text-[11px] text-zinc-400 font-bold uppercase tracking-wider pointer-events-none select-none transition-colors group-hover:text-zinc-800 dark:group-hover:text-white">
+          <span className="text-[8px] md:text-[9px] text-zinc-500 font-bold uppercase tracking-widest pointer-events-none select-none transition-colors group-hover:text-zinc-900 dark:group-hover:text-white">
             {tool.label}
           </span>
         </div>
-
-        <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-black/5 dark:from-white/5 to-transparent pointer-events-none" />
-        <div
-          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-transparent group-hover:border-[currentColor] transition-colors duration-300 pointer-events-none"
-          style={{ borderColor: tool.color + "40", color: tool.color }}
-        />
       </motion.div>
     </>
+  );
+}
+
+// --- TEAM SOCIALS HELPER (UPGRADED UI) ---
+// --- TEAM SOCIALS HELPER (UPGRADED UI) ---
+function TeamMember({ name, role, linkedin, mail }) {
+  return (
+    <li className="flex items-center justify-between group p-3 -mx-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-all border border-transparent hover:border-zinc-200 dark:hover:border-white/10">
+      <div className="flex flex-col">
+        <span className="text-sm font-bold text-zinc-900 dark:text-white">{name}</span>
+        <span className="text-[10px] text-[#FC8B32] font-bold uppercase tracking-widest mt-0.5">{role}</span>
+      </div>
+      <div className="flex items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+        {linkedin && (
+          <a href={linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-7 h-7 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-[#FC8B32] hover:border-[#FC8B32] rounded-md shadow-sm transition-all hover:-translate-y-0.5">
+            <BsLinkedin className="w-3 h-3" />
+          </a>
+        )}
+        {mail && (
+          <a href={`mailto:${mail}`} className="flex items-center justify-center w-7 h-7 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-[#FC8B32] hover:border-[#FC8B32] rounded-md shadow-sm transition-all hover:-translate-y-0.5">
+            <Mail className="w-3.5 h-3.5" />
+          </a>
+        )}
+      </div>
+    </li>
   );
 }
 
@@ -176,6 +202,10 @@ export default function Home() {
     return () => ctx.revert();
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
       <div 
@@ -183,7 +213,7 @@ export default function Home() {
         className="relative min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] text-zinc-800 dark:text-zinc-300 selection:bg-[#FC8B32]/20 overflow-hidden font-sans"
       >
         
-        {/* ABSOLUTE GRADIENT */}
+        {/* TOP ABSOLUTE GRADIENT */}
         <div className="absolute top-[-5%] right-[-10%] w-full max-w-[900px] h-[800px] bg-gradient-to-bl from-[#ff5e00] via-[#FC8B32]/60 to-transparent blur-[120px] rounded-full pointer-events-none z-0" />
         
         {/* HEADER WRAPPER */}
@@ -191,20 +221,22 @@ export default function Home() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 flex justify-between items-center">
             {/* Logo */}
             <a href="/" className="block pointer-events-auto cursor-pointer">
+              {/* Light Mode Logo */}
               <Image 
-                src="/logo03.png" 
+                src="/img04.png" 
                 alt="Gaprio" 
-                width={140} 
-                height={40} 
-                className="block dark:hidden w-auto h-7 sm:h-8" 
+                width={180} 
+                height={48} 
+                className="block dark:hidden w-auto h-9 sm:h-11" 
                 priority 
               />
+              {/* Dark Mode Logo */}
               <Image 
-                src="/logo1.png" 
+                src="/logo2.png" 
                 alt="Gaprio" 
-                width={140} 
-                height={40} 
-                className="hidden dark:block w-auto h-7 sm:h-8" 
+                width={180} 
+                height={48} 
+                className="hidden dark:block w-auto h-9 sm:h-11" 
                 priority 
               />
             </a>
@@ -220,7 +252,7 @@ export default function Home() {
           
           {/* Left-Aligned Hero Section */}
           <section className="max-w-3xl mx-auto px-4 sm:px-6 flex flex-col items-start text-left mb-16 sm:mb-20">
-            <h1 className="flex flex-col items-start text-[1.75rem] min-[390px]:text-4xl sm:text-5xl md:text-6xl font-semibold text-zinc-900 dark:text-white tracking-tight leading-[1.2] sm:leading-[1.15] mb-6 sm:mb-8 fade-up">
+            <h1 className="flex flex-col items-start text-[clamp(1.5rem,7.5vw,3rem)] sm:text-5xl md:text-6xl font-semibold text-zinc-900 dark:text-white tracking-tighter sm:tracking-tight leading-[1.1] mb-6 sm:mb-8 fade-up w-full overflow-visible">
               <span className="block whitespace-nowrap">Stop managing your tools.</span>
               <span className="block text-[#FC8B32] whitespace-nowrap mt-1 sm:mt-2">Start doing actual work.</span>
             </h1>
@@ -253,26 +285,26 @@ export default function Home() {
                   {
                     quote: "Devs side-slacking me... piecing it all together at 11pm.",
                     subreddit: "r/projectmanagement",
-                    upvotes: "192",
-                    link: "https://www.reddit.com/r/projectmanagement" 
+                    upvotes: "196",
+                    link: "https://www.reddit.com/r/projectmanagement/comments/1lzjqts/when_did_project_management_become_shouldering/" 
                   },
                   {
                     quote: "The worst offender: just checking Slack/Email...",
                     subreddit: "r/productivity",
-                    upvotes: "1.7k",
-                    link: "https://www.reddit.com/r/productivity" 
+                    upvotes: "1.8k",
+                    link: "https://www.reddit.com/r/productivity/comments/1nwpxac/i_tracked_every_distraction_i_had_for_7_days_here/" 
                   },
                   {
                     quote: "Busy for 8 hours but nothing meaningful gets done.",
                     subreddit: "r/productivity",
-                    upvotes: "180",
-                    link: "https://www.reddit.com/r/productivity" 
+                    upvotes: "184",
+                    link: "https://www.reddit.com/r/productivity/comments/1obipxi/you_ever_have_a_day_where_youre_busy_for_8_hours/" 
                   },
                   {
                     quote: "Tools running the team, not the other way around.",
                     subreddit: "r/projectmanagement",
-                    upvotes: "47",
-                    link: "https://www.reddit.com/r/projectmanagement" 
+                    upvotes: "77",
+                    link: "https://www.reddit.com/r/projectmanagement/comments/1l8rfav/is_anyone_else_lowkey_burned_out_on_toolfirst/" 
                   }
                 ].map((item, i) => (
                   <div 
@@ -323,19 +355,19 @@ export default function Home() {
               </p>
             </div>
 
-            {/* REAL INTERACTIVE MAP REPLACING THE IMAGE */}
+            {/* REAL INTERACTIVE MAP (Map is transparent, cards have BG) */}
             <div className="my-10 sm:my-14 scroll-reveal">
               <div
                 ref={mapContainerRef}
-                className="relative w-full h-[400px] md:h-[550px] flex items-center justify-center z-20 cursor-crosshair touch-none select-none rounded-3xl bg-zinc-100 dark:bg-[#0e0e0e] border border-zinc-200 dark:border-zinc-800/60 overflow-hidden shadow-inner"
+                className="relative w-full h-[400px] md:h-[550px] flex items-center justify-center z-20 cursor-crosshair touch-none select-none overflow-hidden bg-transparent border-none"
               >
                 {/* Central Hub */}
                 <div className="relative z-30 flex items-center justify-center pointer-events-none">
-                  <div className="absolute w-28 h-28 md:w-40 md:h-40 bg-orange-500/20 blur-[40px] md:blur-[60px] rounded-full animate-pulse" />
+                  <div className="absolute w-28 h-28 md:w-40 md:h-40 bg-[#FC8B32]/20 blur-[40px] md:blur-[60px] rounded-full animate-pulse" />
                   
                   <div className="relative w-20 h-20 md:w-28 md:h-28 bg-white dark:bg-[#0a0a0a] rounded-full border border-zinc-200 dark:border-zinc-800 shadow-[0_0_50px_-10px_rgba(252,139,50,0.3)] flex items-center justify-center ring-1 ring-zinc-100 dark:ring-white/10">
-                    <div className="absolute inset-0 rounded-full border border-orange-500/30 animate-[ping_3s_linear_infinite]" />
-                    <div className="absolute inset-2 md:inset-4 rounded-full border border-orange-500/20 animate-[ping_3s_linear_infinite_1s]" />
+                    <div className="absolute inset-0 rounded-full border border-[#FC8B32]/30 animate-[ping_3s_linear_infinite]" />
+                    <div className="absolute inset-2 md:inset-4 rounded-full border border-[#FC8B32]/20 animate-[ping_3s_linear_infinite_1s]" />
                     
                     <div className="relative w-10 h-10 md:w-14 md:h-14">
                       {/* Logo changes automatically by overriding via tailwind classes */}
@@ -501,42 +533,101 @@ export default function Home() {
           </section>
         </main>
 
-        <footer className="relative z-10 border-t border-zinc-200 dark:border-zinc-800 py-10 text-center text-sm text-zinc-500 mt-10">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col items-center gap-6">
-            <p className="italic max-w-lg mx-auto leading-relaxed text-[13px] sm:text-sm">
-              Gaprio is being built by a small team that believes the next decade of enterprise software won't be about better tools. It will be about the intelligence layer that finally makes every tool work together. We're building that layer.
-            </p>
-            
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-zinc-900 dark:text-zinc-300 font-medium">
-              <span>Hanu Shashwat</span>
-              <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
-              <span>Eklak Alam</span>
-              <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
-              <span>Abhijeet</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FC8B32]"></span>
-              <a href="https://gaprio.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#FC8B32] text-zinc-900 dark:text-white font-semibold transition-colors">gaprio.in</a>
-            </div>
+        {/* --- PREMIUM SAAS FOOTER WITH ORANGE GLOW & BACK TO TOP --- */}
+        <footer className="relative z-10 border-t border-zinc-200 dark:border-zinc-800 bg-[#fafafa] dark:bg-[#050505] pt-16 pb-8 overflow-hidden">
+          
+          {/* HUGE BOTTOM GRADIENT GLOW TO MATCH TOP */}
+          <div className="absolute bottom-[-20%] left-[-10%] w-full max-w-[800px] h-[600px] bg-gradient-to-tr from-[#ff5e00] via-[#FC8B32]/30 to-transparent blur-[140px] rounded-full pointer-events-none z-0" />
+          
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+            {/* Top Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 mb-16">
+              
+              {/* Brand Column */}
+              <div className="md:col-span-5 lg:col-span-6 flex flex-col items-start text-left">
+                <a href="/" className="mb-6 block">
+                  <Image src="/img04.png" alt="Gaprio" width={160} height={40} className="block dark:hidden w-auto h-8 sm:h-9" priority />
+                  <Image src="/logo2.png" alt="Gaprio" width={160} height={40} className="hidden dark:block w-auto h-8 sm:h-9" priority />
+                </a>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-sm mb-8">
+                  Gaprio acts as an interactive neural mesh that reads conversations, attends meetings, and always knows exactly what needs to happen next. The intelligence layer for your stack.
+                </p>
+                <div className="flex items-center gap-4">
+                  {/* <a href="https://twitter.com/gaprio" target="_blank" rel="noopener noreferrer" className="p-2 bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-white hover:bg-[#FC8B32] dark:hover:bg-[#FC8B32] hover:border-[#FC8B32] rounded-full transition-all duration-300 hover:-translate-y-0.5">
+                    <BsTwitterX className="w-4 h-4" />
+                  </a> */}
+                  <a href="https://linkedin.com/company/gaprio" target="_blank" rel="noopener noreferrer" className="p-2 bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-white hover:bg-[#FC8B32] dark:hover:bg-[#FC8B32] hover:border-[#FC8B32] rounded-full transition-all duration-300 hover:-translate-y-0.5">
+                    <BsLinkedin className="w-4 h-4" />
+                  </a>
+                  {/* <a href="https://instagram.com/gaprio" target="_blank" rel="noopener noreferrer" className="p-2 bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-white hover:bg-[#FC8B32] dark:hover:bg-[#FC8B32] hover:border-[#FC8B32] rounded-full transition-all duration-300 hover:-translate-y-0.5">
+                    <BsInstagram className="w-4 h-4" />
+                  </a> */}
+                  <a href="mailto:gaprio.management@gmail.com" className="p-2 bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-white hover:bg-[#FC8B32] dark:hover:bg-[#FC8B32] hover:border-[#FC8B32] rounded-full transition-all duration-300 hover:-translate-y-0.5">
+                    <Mail className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
 
-            {/* Social & Contact Links */}
-            <div className="flex items-center justify-center gap-6 mt-2 mb-2">
-              <a href="mailto:contact@gaprio.in" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#FC8B32] transition-colors" aria-label="Email Us">
-                <Mail className="w-5 h-5" />
-              </a>
-              <a href="https://twitter.com/gaprio" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#FC8B32] transition-colors" aria-label="Twitter">
-                <X className="w-5 h-5" />
-              </a>
-              <a href="https://linkedin.com/company/gaprio" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#FC8B32] transition-colors" aria-label="LinkedIn">
-                <BsLinkedin className="w-5 h-5" />
-              </a>
-              <a href="https://instagram.com/gaprio" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#FC8B32] transition-colors" aria-label="Instagram">
-                <BsInstagram className="w-5 h-5" />
-              </a>
-            </div>
+              {/* Founding Team Column */}
+              <div className="md:col-span-4 lg:col-span-3">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-white mb-6 uppercase tracking-widest">Founding Team</h4>
+                <ul className="space-y-2">
+                  <ul className="space-y-2">
+                  <TeamMember 
+                    name="Hanu Shashwat" 
+                    role="CEO" 
+                    linkedin="https://www.linkedin.com/in/hanushashwat/"
+                    mail="hanushashwat733@gmail.com" 
+                  />
+                  <TeamMember 
+                    name="Eklak Alam" 
+                    role="CTO" 
+                    linkedin="http://linkedin.com/in/eklak-alam" 
+                    mail="eklakalam420@gmail.com" 
+                  />
+                  <TeamMember 
+                    name="Abhijeet" 
+                    role="CAIO" 
+                    linkedin="http://linkedin.com/in/abhijeet-singh-5a0202302" 
+                    mail="abhx09.singh@gmail.com" 
+                  />
+                </ul>
+                </ul>
+              </div>
 
-            <p className="text-xs opacity-60">© 2026 Gaprio. All rights reserved.</p>
+              {/* Navigation Links Column */}
+              <div className="md:col-span-3 lg:col-span-3">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-white mb-6 uppercase tracking-widest">Product</h4>
+                <ul className="space-y-3">
+                  <li><a href="https://www.gaprio.in/waitlist" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-[#FC8B32] dark:hover:text-[#FC8B32] transition-colors cursor-pointer font-medium">Join Waitlist</a></li>
+                  <li><a href="https://calendly.com/gaprio-management/30min" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-[#FC8B32] dark:hover:text-[#FC8B32] transition-colors cursor-pointer font-medium">Schedule a Call</a></li>
+                  {/* Fixed the mailto link here */}
+                  <li><a href="mailto:gaprio.management@gmail.com" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-[#FC8B32] dark:hover:text-[#FC8B32] transition-colors cursor-pointer font-medium">Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Bottom Bar with Back to Top */}
+            <div className="border-t border-zinc-200 dark:border-zinc-800/60 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              
+              <div className="flex items-center gap-4">
+                <p className="text-xs text-zinc-600 dark:text-zinc-500 font-medium">© 2026 Gaprio.</p>
+                {/* <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-[10px] text-zinc-700 dark:text-zinc-300 font-bold uppercase tracking-widest">Systems Operational</span>
+                </div> */}
+              </div>
+
+              <button 
+                onClick={scrollToTop} 
+                className="group flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-full shadow-sm hover:border-[#FC8B32] dark:hover:border-[#FC8B32] hover:text-[#FC8B32] dark:hover:text-[#FC8B32] text-zinc-600 dark:text-zinc-400 transition-all duration-300 cursor-pointer"
+                aria-label="Scroll to top"
+              >
+                <span className="text-[10px] font-bold uppercase tracking-widest">Back to top</span>
+                <ArrowUp className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" />
+              </button>
+
+            </div>
           </div>
         </footer>
       </div>
