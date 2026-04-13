@@ -588,7 +588,7 @@ export default function Home() {
                   <TeamMember 
                     name="Abhijeet" 
                     role="CAIO" 
-                    linkedin="http://linkedin.com/in/abhijeet-singh-5a0202302" 
+                    linkedin="https://www.linkedin.com/in/abhx09/" 
                     mail="abhx09.singh@gmail.com" 
                   />
                 </ul>
